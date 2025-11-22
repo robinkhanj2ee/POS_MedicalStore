@@ -58,7 +58,7 @@ export const generateThermalReceipt = (invoice: Invoice) => {
   }
 
   // Divider
-  doc.setLineDash([1, 1], 0);
+  (doc as any).setLineDash([1, 1], 0);
   doc.line(margin, yPos, pageWidth - margin, yPos);
   yPos += 3;
 
@@ -67,7 +67,7 @@ export const generateThermalReceipt = (invoice: Invoice) => {
   doc.text("Item", margin, yPos);
   doc.text("Ttl", pageWidth - margin - doc.getTextWidth("Ttl"), yPos);
   yPos += 3;
-  doc.setLineDash([], 0); // Reset dash
+  (doc as any).setLineDash([], 0); // Reset dash
 
   // Items
   doc.setFont("courier", "normal");
@@ -90,10 +90,10 @@ export const generateThermalReceipt = (invoice: Invoice) => {
 
   // Divider
   yPos += 1;
-  doc.setLineDash([1, 1], 0);
+  (doc as any).setLineDash([1, 1], 0);
   doc.line(margin, yPos, pageWidth - margin, yPos);
   yPos += 4;
-  doc.setLineDash([], 0);
+  (doc as any).setLineDash([], 0);
 
   // Totals
   lineText("Subtotal:", invoice.subtotal.toFixed(2), yPos);

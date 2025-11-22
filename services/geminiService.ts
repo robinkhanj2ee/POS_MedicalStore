@@ -27,6 +27,6 @@ export const checkDrugInteractions = async (items: LineItem[]): Promise<string> 
     return response.text || "No analysis returned.";
   } catch (error) {
     console.error("Gemini API Error:", error);
-    return "Unable to check interactions at this time. Please verify manually.";
+    return "Unable to check interactions. Please verify API Key is configured.";
   }
 };
