@@ -1,0 +1,5 @@
+{
+  "name": "MediPOS & Thermal Receipt",
+  "description": "A specialized Point of Sale application for medical stores featuring dynamic invoicing, AI-powered drug interaction checks, and dedicated 58mm thermal receipt generation.",
+  "requestFramePermissions": []
+}
