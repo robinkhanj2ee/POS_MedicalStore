@@ -12,6 +12,16 @@ interface Props {
 }
 
 export const InvoiceForm: React.FC<Props> = ({ onInvoiceSaved }) => {
+  // Helper to get local date string YYYY-MM-DD
+  const getTodayString = () => {
+    const d = new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const [invoiceDate, setInvoiceDate] = useState(getTodayString());
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [items, setItems] = useState<LineItem[]>([]);
@@ -78,9 +88,14 @@ export const InvoiceForm: React.FC<Props> = ({ onInvoiceSaved }) => {
       return;
     }
 
+    // Parse date safely to avoid timezone issues
+    const [y, m, d] = invoiceDate.split('-').map(Number);
+    const localDate = new Date(y, m - 1, d);
+    const formattedDate = localDate.toLocaleDateString();
+
     const invoice: Invoice = {
-      id: generateInvoiceId(),
-      date: new Date().toLocaleDateString(),
+      id: generateInvoiceId(invoiceDate),
+      date: formattedDate,
       time: new Date().toLocaleTimeString(),
       customerName,
       customerPhone,
@@ -103,6 +118,7 @@ export const InvoiceForm: React.FC<Props> = ({ onInvoiceSaved }) => {
   };
 
   const handleReset = () => {
+    setInvoiceDate(getTodayString());
     setCustomerName('');
     setCustomerPhone('');
     setItems([]);
@@ -124,8 +140,17 @@ export const InvoiceForm: React.FC<Props> = ({ onInvoiceSaved }) => {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col h-full overflow-hidden">
       {/* Header Inputs */}
-      <div className="p-6 border-b border-slate-100 grid grid-cols-1 md:grid-cols-12 gap-6 bg-white">
-        <div className="md:col-span-5">
+      <div className="p-6 border-b border-slate-100 grid grid-cols-1 md:grid-cols-12 gap-4 bg-white">
+        <div className="md:col-span-2">
+          <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Date</label>
+          <input
+            type="date"
+            value={invoiceDate}
+            onChange={e => setInvoiceDate(e.target.value)}
+            className={headerInputClass}
+          />
+        </div>
+        <div className="md:col-span-4">
           <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Customer Name</label>
           <input
             type="text"
@@ -135,7 +160,7 @@ export const InvoiceForm: React.FC<Props> = ({ onInvoiceSaved }) => {
             placeholder="Enter customer name..."
           />
         </div>
-        <div className="md:col-span-4">
+        <div className="md:col-span-3">
           <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Phone Number</label>
           <input
             type="tel"
@@ -148,7 +173,9 @@ export const InvoiceForm: React.FC<Props> = ({ onInvoiceSaved }) => {
         <div className="md:col-span-3 flex flex-col justify-end">
            <div className="bg-slate-50 px-4 py-2.5 rounded-lg border border-slate-200 flex justify-between items-center h-[46px]">
              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Invoice ID</span>
-             <span className="font-mono font-bold text-slate-700 text-sm">AUTO-GEN</span>
+             <span className="font-mono font-bold text-slate-700 text-sm">
+               {`INV-${invoiceDate.replace(/-/g, '')}-...`}
+             </span>
            </div>
         </div>
       </div>

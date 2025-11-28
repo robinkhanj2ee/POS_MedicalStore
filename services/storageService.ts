@@ -13,9 +13,24 @@ export const getInvoices = (): Invoice[] => {
   return data ? JSON.parse(data) : [];
 };
 
-export const generateInvoiceId = (): string => {
+export const generateInvoiceId = (dateString?: string): string => {
   const now = new Date();
-  // Format: INV-YYYYMMDD-HHMMSS
-  const timestamp = now.toISOString().replace(/[-:T.]/g, '').slice(0, 14);
-  return `INV-${timestamp}`;
+  
+  let datePart = '';
+  if (dateString) {
+    // dateString is expected in YYYY-MM-DD format
+    datePart = dateString.replace(/-/g, '');
+  } else {
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    datePart = `${yyyy}${mm}${dd}`;
+  }
+
+  // Use current time for uniqueness
+  const hh = String(now.getHours()).padStart(2, '0');
+  const min = String(now.getMinutes()).padStart(2, '0');
+  const ss = String(now.getSeconds()).padStart(2, '0');
+
+  return `INV-${datePart}-${hh}${min}${ss}`;
 };
